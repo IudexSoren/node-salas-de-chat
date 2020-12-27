@@ -36,8 +36,10 @@ io.on('connection', (client) => {
 
     client.on('disconnect', () => {
         let personaBorrada = users.borrarPersona(client.id);
-        client.broadcast.to(personaBorrada.sala).emit('crearMensaje', crearMensaje('Administrador', `${personaBorrada.nombre} salió`));
-        client.broadcast.to(personaBorrada.sala).emit('listaPersonas', users.getPersonasPorSala(personaBorrada.sala));
+        if (personaBorrada) {
+            client.broadcast.to(personaBorrada.sala).emit('crearMensaje', crearMensaje('Administrador', `${personaBorrada.nombre} salió`));
+            client.broadcast.to(personaBorrada.sala).emit('listaPersonas', users.getPersonasPorSala(personaBorrada.sala));
+        }
     });
 
     client.on('filtrarPersonas', (data, callback) => {
