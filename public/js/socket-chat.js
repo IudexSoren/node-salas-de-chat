@@ -1,9 +1,15 @@
+
+
 var socket = io();
 
 var params = new URLSearchParams(window.location.search);
 if (!params.has('nombre') || !params.has('sala')) {
     window.location = 'index.html';
     throw new Error('El nombre y la sala son requeridos');
+}
+if (params.get('nombre') === 'Administrador') {
+    window.location = 'index.html';
+    throw new Error('Nombre no permitido');
 }
 
 let usuario = {
@@ -16,7 +22,7 @@ socket.on('connect', function() {
 
     socket.emit('entrarChat', usuario,
     (resp) => {
-        console.log('Usuarios conectados', resp);
+        renderizarUsuarios(resp);
     });
 
 });
@@ -28,19 +34,13 @@ socket.on('disconnect', function() {
 
 });
 
-// socket.emit('crearMensaje', {
-//     usuario: 'Fernando',
-//     mensaje: 'Hola Mundo'
-// }, function(resp) {
-//     console.log('respuesta server: ', resp);
-// });
-
 socket.on('crearMensaje', function(resp) {
-    console.log(resp);
+    renderizarMensajes(resp, false);
+    scrollBottom();
 });
 
 socket.on('listaPersonas', function(resp) {
-    console.log(resp);
+    renderizarUsuarios(resp)
 });
 
 // Mensajes privados
